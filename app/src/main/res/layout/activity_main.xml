@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background"
+    android:focusable="true"
+    android:keepScreenOn="true">
+
+    <CheckBox
+        android:id="@+id/onCheckBox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:layout_marginBottom="70dp"
+        android:text="@string/POWER"
+        android:textColor="@color/powerOff"
+        android:textColorHint="@android:color/white"
+        android:textSize="50sp"
+        android:textStyle="bold|normal"
+        android:typeface="normal" />
+
+    <TextView
+        android:id="@+id/lvlLightTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="55dp"
+        android:text="@string/lvlText"
+        android:textColor="@android:color/white"
+        android:textSize="50sp" />
+
+    <SeekBar
+        android:id="@+id/lightSeekBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/lineLvlTextView"
+        android:layout_alignRight="@+id/lineLvlTextView"
+        android:layout_below="@+id/onCheckBox"
+        android:layout_marginTop="16dp"
+        android:max="5"
+        android:maxHeight="50dp"
+        android:maxWidth="50dp"
+        android:minHeight="50dp"
+        android:paddingBottom="0dp"
+        android:progress="0" />
+
+    <TextView
+        android:id="@+id/lineLvlTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/lightSeekBar"
+        android:layout_centerHorizontal="true"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:text="@string/lvlLine"
+        android:textColor="@android:color/darker_gray"
+        android:textSize="20sp"
+        android:textStyle="italic" />
+
+</RelativeLayout>

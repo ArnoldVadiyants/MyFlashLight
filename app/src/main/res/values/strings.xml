@@ -1,0 +1,16 @@
+<resources>
+    <string name="app_name">MyFlashLight</string>
+    <string name = "turn_off">turn off</string>
+    <string name = "turn_on">turn on</string>
+    <string name="exit">Press again to exit</string>
+    <string name = "error">Error!</string>
+    <string name = "accessTitle">Access error</string>
+    <string name = "accessMessage">Sorry, the camera is in use by another process or device policy manager has disabled the camera!</string>
+    <string name = "flashTitle">Flash error</string>
+    <string name = "flashMessage">Sorry, your device doesn`t support flash light!  </string>
+    <string name = "OK">OK</string>
+    <string name = "POWER">POWER</string>
+    <string name = "lvlText">0</string>
+    <string name = "lvlLine">0........1........2........3........4........5</string>
+
+</resources>

@@ -1,10 +1,15 @@
 package com.arnold.myflashlight;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Point;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Vibrator;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.Display;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
@@ -24,12 +29,24 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        Display display = getWindowManager().getDefaultDisplay();
+        Point size = new Point();
+        int width = 300;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
+            display.getSize(size);
+           width = ((int)(((size.x))/2));
+        }
+        else
+        {
+          width = ((int)(((display.getWidth()))/2));
+        }
         Log.d(TAG, "onCreate_Activity");
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.main);
         mLightSeekBar = (SeekBar) findViewById(R.id.lightSeekBar);
         mLightSeekBar.setOnSeekBarChangeListener(lightSeekBarChangeListener);
         mOnCheckBox = (CheckBox) findViewById(R.id.onCheckBox);
+        mOnCheckBox.setWidth(width);
+        mOnCheckBox.setHeight(width);
         mOnCheckBox.setOnCheckedChangeListener(onCheckBoxListener);
         mLvlTextView = (TextView) findViewById(R.id.lvlLightTextView);
         mPropertiesLight = PropertiesLight.getInstance();
@@ -75,14 +92,16 @@ public class MainActivity extends AppCompatActivity {
         public void onCheckedChanged(CompoundButton buttonView,
                                      boolean isChecked) {
             mPropertiesLight.setCheckLight(isChecked);
+            Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+            v.vibrate(50);
             if (isChecked) {
                 startService(new Intent(MainActivity.this, LedService.class));
-                mOnCheckBox.setTextColor(getResources().getColor(
-                        R.color.powerOn));
+             //   mOnCheckBox.setTextColor(getResources().getColor(
+               //         R.color.powerOn));
 
             } else {
-                mOnCheckBox.setTextColor(getResources().getColor(
-                        R.color.powerOff));
+            //    mOnCheckBox.setTextColor(getResources().getColor(
+            //            R.color.powerOff));
             }
 
         }// end onCheckedChanged

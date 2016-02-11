@@ -1,35 +1,47 @@
 package com.arnold.myflashlight;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.graphics.Point;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Vibrator;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.Display;
-import android.widget.CheckBox;
+import android.view.SurfaceHolder;
+import android.view.SurfaceView;
+import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
+import android.widget.ImageButton;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import java.io.IOException;
+
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
-    private CheckBox mOnCheckBox;
+ //   private CheckBox mOnCheckBox;\
+    private ImageButton mFlashImageButton;
     private SeekBar mLightSeekBar;
     private TextView mLvlTextView;
     private PropertiesLight mPropertiesLight;
+    private SurfaceView mSurfaceView;
+    private SurfaceHolder mSurfaceHolder;
     private long mBack_Pressed;
     private boolean mNotificationIsCreated;
-
+    private boolean mIsFlashOn;
+    private ScreenOffReciver mScreenOffReciver;
+    public static Activity sActivity;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Display display = getWindowManager().getDefaultDisplay();
+        sActivity = this;
+        startService(new Intent(MainActivity.this, LedService.class));
+
+        /*Display display = getWindowManager().getDefaultDisplay();
         Point size = new Point();
         int width = 300;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
@@ -40,28 +52,69 @@ public class MainActivity extends AppCompatActivity {
         {
           width = ((int)(((display.getWidth()))/2));
         }
-        Log.d(TAG, "onCreate_Activity");
+        Log.d(TAG, "onCreate_Activity" + "size = " + width);*/
         setContentView(R.layout.main);
+       mSurfaceView = (SurfaceView)findViewById(R.id.surfaceView);
+
+                    mSurfaceHolder = mSurfaceView.getHolder();
+                    mSurfaceHolder.addCallback(new SurfaceHolder.Callback() {
+                        @Override
+                        public void surfaceCreated(SurfaceHolder holder) {
+                            try {
+                                LedService.mCamera.setPreviewDisplay(holder);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
+
+            }
+
+            @Override
+            public void surfaceDestroyed(SurfaceHolder holder) {
+
+            }
+        });
         mLightSeekBar = (SeekBar) findViewById(R.id.lightSeekBar);
         mLightSeekBar.setOnSeekBarChangeListener(lightSeekBarChangeListener);
-        mOnCheckBox = (CheckBox) findViewById(R.id.onCheckBox);
-        mOnCheckBox.setWidth(width);
-        mOnCheckBox.setHeight(width);
-        mOnCheckBox.setOnCheckedChangeListener(onCheckBoxListener);
+        mFlashImageButton = (ImageButton)findViewById(R.id.flashImageButton);
+       mFlashImageButton.setOnClickListener(onFlashImageButtonListener);
+        //   mOnCheckBox = (CheckBox) findViewById(R.id.onCheckBox);
+        //mOnCheckBox.setWidth(width);
+        //mOnCheckBox.setHeight(width);
+
+
+      //  mOnCheckBox.setOnCheckedChangeListener(onCheckBoxListener);
+
         mLvlTextView = (TextView) findViewById(R.id.lvlLightTextView);
         mPropertiesLight = PropertiesLight.getInstance();
         mNotificationIsCreated = false;
-        screenOffListener();
+        mScreenOffReciver = new ScreenOffReciver();
+
+
+
+
 
     } // onCreate
 
     @Override
+    protected void onStart() {
+
+        super.onStart();
+        screenOffListener();
+
+    }
+
+    @Override
     protected void onDestroy() {
         super.onDestroy();
-        mOnCheckBox.setChecked(false);
+     //   mOnCheckBox.setChecked(false);
+         mFlashImageButton.setPressed(false);
         stopService(new Intent(MainActivity.this, NotifyService.class));
         stopService(new Intent(MainActivity.this, LedService.class));
-
+          unregisterReceiver(mScreenOffReciver);
     }
 
     @Override
@@ -78,14 +131,92 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onResume() {
         super.onResume();
-        mOnCheckBox.setChecked(mPropertiesLight.getCheckLight());
+if(mPropertiesLight.getCheckLight())
+{
+    //stopService(new Intent(MainActivity.this, LedService.class));
+    //startService(new Intent(MainActivity.this, LedService.class));
+}
+        Log.v(TAG, "onResume");
+//        mOnCheckBox.setChecked(mPropertiesLight.getCheckLight());
+        mFlashImageButton.setSelected(mPropertiesLight.getCheckLight());
+     /*   if(LedService.mCamera !=  null)
+        {
+            Log.v(TAG, "mCamera !=  null");
+            mSurfaceHolder = mSurfaceView.getHolder();
+      //      LedService.mCamera.setParameters(LedService.mParams);
+            try {
+                LedService.mCamera.setPreviewDisplay(mSurfaceHolder);
+                LedService.mCamera.setParameters(LedService.mParams);
+                LedService.mCamera.startPreview();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }*/
+    //    stopService(new Intent(MainActivity.this, LedService.class));
+  //      LedService.releaseCameraResources();
+      //  LedService.mCamera.release();
+   //     startService(new Intent(MainActivity.this, LedService.class));
+ /*     mSurfaceView = (SurfaceView)findViewById(R.id.surfaceView);
+
+        mSurfaceHolder = mSurfaceView.getHolder();
+
+        mSurfaceHolder.addCallback(new SurfaceHolder.Callback() {
+            @Override
+            public void surfaceCreated(SurfaceHolder holder) {
+                try {
+                    LedService.mCamera.lock();
+                    LedService.mCamera.setPreviewDisplay(mSurfaceHolder);
+                    LedService.mCamera.setParameters(LedService.mParams);
+                    LedService.mCamera.startPreview();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
+
+            }
+
+            @Override
+            public void surfaceDestroyed(SurfaceHolder holder) {
+
+            }
+        });*/
+
+       /* try {
+
+           // LedService.mCamera.setPreviewDisplay(holder);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }*/
         if (mNotificationIsCreated) {
             stopService(new Intent(MainActivity.this, NotifyService.class));
             mNotificationIsCreated = false;
         }
 
     }
+    private View.OnClickListener onFlashImageButtonListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            mPropertiesLight.setCheckLight(!v.isSelected());
 
+new Thread(new Runnable() {
+    @Override
+    public void run() {
+        Vibrator vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+        vibrator.vibrate(50);
+    }
+}).start();
+
+        v.setSelected(!v.isSelected());
+
+        if (v.isSelected()) {
+            startService(new Intent(MainActivity.this, LedService.class));
+        } else {
+        }
+        }
+    };
     private OnCheckedChangeListener onCheckBoxListener = new OnCheckedChangeListener() {
 
         @Override
@@ -146,7 +277,12 @@ public class MainActivity extends AppCompatActivity {
     private void screenOffListener() {
         IntentFilter filter = new IntentFilter(Intent.ACTION_SCREEN_ON);
         filter.addAction(Intent.ACTION_SCREEN_OFF);
-        registerReceiver(new ScreenOffReciver(), filter);
+        registerReceiver(mScreenOffReciver, filter);
     }
 
+    @Override
+    protected void onStop() {
+      //  unregisterReceiver(mScreenOffReciver);
+        super.onStop();
+    }
 }// MainActivity

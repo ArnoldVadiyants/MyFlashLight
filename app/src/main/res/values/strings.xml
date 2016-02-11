@@ -11,6 +11,6 @@
     <string name = "OK">OK</string>
     <string name = "POWER">POWER</string>
     <string name = "lvlText">0</string>
-    <string name = "lvlLine">0........1........2........3........4........5</string>
+    <string name = "lvlLine">0...........1...........2...........3...........4...........5</string>
 
 </resources>

@@ -12,7 +12,7 @@ public class PropertiesLight {
     private PropertiesLight() {
         // TODO Auto-generated constructor stub
         this.mLevelLight = 0;
-        this.mCheckLight = false;
+        this.mCheckLight =true;
     }
 
     public static PropertiesLight getInstance() {
